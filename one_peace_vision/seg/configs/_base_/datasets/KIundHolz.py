@@ -33,7 +33,7 @@ test_pipeline = [
 ]
 data = dict(
     samples_per_gpu=4,
-    workers_per_gpu=2,
+    workers_per_gpu=4,
     drop_last=True,
     train=dict(
         type=dataset_type,

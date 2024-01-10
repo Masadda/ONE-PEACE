@@ -4,14 +4,14 @@ _base_ = [
     '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_40k.py'
 ]
-crop_size = (896, 896)
+crop_size = (512, 512)
 pretrained = '/path/to/one-peace-vision.pkl'
 model = dict(
     pretrained=pretrained,
     backbone=dict(
         type='OnePeaceAdapter',
         attention_heads=24,
-        bucket_size=56,
+        bucket_size=32,
         dropout=0.0,
         embed_dim=1536,
         ffn_embed_dim=6144,
