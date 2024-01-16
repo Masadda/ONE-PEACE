@@ -146,5 +146,5 @@ data = dict(samples_per_gpu=1,
             val=dict(pipeline=test_pipeline),
             test=dict(pipeline=test_pipeline))
 runner = dict(type='IterBasedRunner')
-checkpoint_config = dict(by_epoch=False, interval=4000, max_keep_ckpts=10, create_symlink=False)
+checkpoint_config = dict(by_epoch=False, interval=4000, max_keep_ckpts=1, create_symlink=False)
 evaluation = dict(interval=4000, metric='mIoU', save_best='mIoU')
