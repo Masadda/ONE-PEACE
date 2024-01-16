@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 import mmcv
 
-import mmcv_custom   # noqa: F401,F403
+#import mmcv_custom   # noqa: F401,F403
 import mmseg_custom   # noqa: F401,F403
 from mmseg.apis import inference_segmentor, init_segmentor, show_result_pyplot
 from mmseg.core.evaluation import get_palette
