@@ -13,8 +13,10 @@ import cv2
 import os.path as osp
 import os
 
+from sklearn.metrics import jaccard_score
+import numpy as np
 
-def test_single_image(model, img_name, out_dir, color_palette, opacity):
+def test_single_image(model, img_name, out_dir, color_palette, opacity, gt_dir):
     result = inference_segmentor(model, img_name)
     
     # show the results
@@ -28,8 +30,21 @@ def test_single_image(model, img_name, out_dir, color_palette, opacity):
     mmcv.mkdir_or_exist(out_dir)
     out_path = osp.join(out_dir, osp.basename(img_name))
     cv2.imwrite(out_path, img)
+    
+    #evaluation
+    gt_file = osp.join(gt_dir, osp.basename(img_name).split(".")[0] + ".png")
+    gt = cv2.imread(gt_file, cv2.IMREAD_GRAYSCALE)
+    gt = np.subtract(gt, np.ones(gt.shape))
+    eval = jaccard_score(gt, result, average='weighted')
+    
+    print(gt)
+    print(gt.shape, type(gt))
+    print(result)
+    print(result.shape, type(result)
+    print(eval, type(eval))
+    
     print(f"Result is save at {out_path}")
-
+    return eval
 
 def main():
     parser = ArgumentParser()
@@ -49,6 +64,9 @@ def main():
         type=float,
         default=0.5,
         help='Opacity of painted segmentation map. In (0, 1] range.')
+    
+    parser.add_argument('--ground-truth', type=str, help='ground truth dir')
+    
     args = parser.parse_args()
 
     # build the model from a config file and a checkpoint file
@@ -65,9 +83,9 @@ def main():
     # check arg.img is directory of a single image.
     if osp.isdir(args.img):
         for img in os.listdir(args.img):
-            test_single_image(model, osp.join(args.img, img), args.out, palette, args.opacity)
+            test_single_image(model, osp.join(args.img, img), args.out, palette, args.opacity, args.ground_truth)
     else:
-        test_single_image(model, args.img, args.out, palette, args.opacity)
+        test_single_image(model, args.img, args.out, palette, args.opacity, args.ground_truth)
 
 if __name__ == '__main__':
     main()
