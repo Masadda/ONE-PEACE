@@ -31,14 +31,13 @@ def test_single_image(model, img_name, out_dir, color_palette, opacity, gt_dir):
     mmcv.mkdir_or_exist(out_dir)
     out_path = osp.join(out_dir, osp.basename(img_name))
     cv2.imwrite(out_path, img)
+    print(f"Result is save at {out_path}")
     
     #evaluation
     gt_file = osp.join(gt_dir, osp.basename(img_name).split(".")[0] + ".png")
     gt = cv2.imread(gt_file, cv2.IMREAD_GRAYSCALE)
-    
     eval = jaccard_score(gt.flatten(), result[0].flatten(), average='weighted')
     
-    print(f"Result is save at {out_path}")
     return eval
 
 def main():
