@@ -15,6 +15,7 @@ import os
 
 from sklearn.metrics import jaccard_score
 import numpy as np
+import json
 
 def test_single_image(model, img_name, out_dir, color_palette, opacity, gt_dir):
     result = inference_segmentor(model, img_name)
@@ -34,14 +35,8 @@ def test_single_image(model, img_name, out_dir, color_palette, opacity, gt_dir):
     #evaluation
     gt_file = osp.join(gt_dir, osp.basename(img_name).split(".")[0] + ".png")
     gt = cv2.imread(gt_file, cv2.IMREAD_GRAYSCALE)
-    gt = np.subtract(gt, np.ones(gt.shape))
-    eval = jaccard_score(gt, result, average='weighted')
     
-    print(gt)
-    print(gt.shape, type(gt))
-    print(result)
-    print(result.shape, type(result)
-    print(eval, type(eval))
+    eval = jaccard_score(gt.flatten(), result[0].flatten(), average='weighted')
     
     print(f"Result is save at {out_path}")
     return eval
@@ -82,10 +77,15 @@ def main():
  
     # check arg.img is directory of a single image.
     if osp.isdir(args.img):
+        evals = {}
         for img in os.listdir(args.img):
-            test_single_image(model, osp.join(args.img, img), args.out, palette, args.opacity, args.ground_truth)
+            eval = test_single_image(model, osp.join(args.img, img), args.out, palette, args.opacity, args.ground_truth)
+            evals[img]=eval
+        with open(osp.join(args.out,"eval.json"),'w') as fp:
+            json.dump(evals, fp, sort_keys=True, indent=4)
     else:
-        test_single_image(model, args.img, args.out, palette, args.opacity, args.ground_truth)
+        eval = test_single_image(model, args.img, args.out, palette, args.opacity, args.ground_truth)
+        print(img, eval)
 
 if __name__ == '__main__':
     main()
