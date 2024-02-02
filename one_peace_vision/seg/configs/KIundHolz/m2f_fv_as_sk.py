@@ -1,17 +1,17 @@
 _base_ = [
-    '../_base_/models/mask2former_onepeace_cocostuff164k.py',
-    '../_base_/datasets/coco-stuff164k.py',
+    '../_base_/models/mask2former_KIundHolz_no_fv.py',
+    '../_base_/datasets/KIundHolz_fk_as_sk.py',
     '../_base_/default_runtime.py',
-    '../_base_/schedules/schedule_80k.py'
+    '../_base_/schedules/schedule_40k.py'
 ]
-crop_size = (896, 896)
+crop_size = (512, 512)
 pretrained = '/path/to/one-peace-vision.pkl'
 model = dict(
     pretrained=pretrained,
     backbone=dict(
         type='OnePeaceAdapter',
         attention_heads=24,
-        bucket_size=56,
+        bucket_size=32,
         dropout=0.0,
         embed_dim=1536,
         ffn_embed_dim=6144,
@@ -105,7 +105,7 @@ img_norm_cfg = dict(
     mean=[122.771, 116.746, 104.094], std=[68.5, 66.632, 70.323], to_rgb=True)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadAnnotations', reduce_zero_label=False),
     dict(type='Resize', img_scale=(3584, 896), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
@@ -132,7 +132,7 @@ test_pipeline = [
             dict(type='Collect', keys=['img']),
         ])
 ]
-optimizer = dict(_delete_=True, type='AdamW', lr=2e-5, betas=(0.9, 0.999), weight_decay=0.05,
+optimizer = dict(_delete_=True, type='AdamW', lr=1e-5, betas=(0.9, 0.999), weight_decay=0.05,
                  constructor='OnePeaceLearningRateDecayOptimizerConstructor',
                  paramwise_cfg=dict(num_layers=40, decay_rate=0.95))
 lr_config = dict(_delete_=True,
@@ -146,5 +146,5 @@ data = dict(samples_per_gpu=1,
             val=dict(pipeline=test_pipeline),
             test=dict(pipeline=test_pipeline))
 runner = dict(type='IterBasedRunner')
-checkpoint_config = dict(by_epoch=False, interval=8000, max_keep_ckpts=10, create_symlink=False)
-evaluation = dict(interval=8000, metric='mIoU', save_best='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=4000, max_keep_ckpts=1, create_symlink=False)
+evaluation = dict(interval=4000, metric='mIoU', save_best='mIoU')

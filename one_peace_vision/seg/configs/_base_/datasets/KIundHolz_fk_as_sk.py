@@ -1,12 +1,12 @@
 # dataset settings
-dataset_type = 'COCOStuffDataset'
-data_root = '/datasets/COCO'
+dataset_type = 'KIundHolzDataset_no_fv'
+data_root = '/home/vault/b196ac/b196ac14/datasets/ade20k_fv_as_sk'
 img_norm_cfg = dict(
-    mean=[122.771, 116.746, 104.094], std=[68.5, 66.632, 70.323], to_rgb=True)
+    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 crop_size = (512, 512)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations'),
+    dict(type='LoadAnnotations', reduce_zero_label=False),
     dict(type='Resize', img_scale=(2048, 512), ratio_range=(0.5, 2.0)),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
@@ -33,22 +33,23 @@ test_pipeline = [
 ]
 data = dict(
     samples_per_gpu=4,
-    workers_per_gpu=4,
+    workers_per_gpu=1,
+    drop_last=True,
     train=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='images/train2017',
-        ann_dir='annotations/train2017',
+        img_dir='images/training',
+        ann_dir='annotations/training',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='images/val2017',
-        ann_dir='annotations/val2017',
+        img_dir='images/validation',
+        ann_dir='annotations/validation',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         data_root=data_root,
-        img_dir='images/val2017',
-        ann_dir='annotations/val2017',
+        img_dir='images/test',
+        ann_dir='annotations/test',
         pipeline=test_pipeline))
