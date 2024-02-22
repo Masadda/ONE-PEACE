@@ -1,6 +1,6 @@
 _base_ = [
     '../_base_/models/mask2former_KIundHolz.py',
-    '../_base_/datasets/KIundHolz_full.py',
+    '../_base_/datasets/KIundHolz_no_fv.py',
     '../_base_/default_runtime.py',
     '../_base_/schedules/schedule_40k.py'
 ]
