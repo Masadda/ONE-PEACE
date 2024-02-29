@@ -2,7 +2,7 @@ _base_ = [
     '../_base_/models/mask2former_KIundHolz.py',
     '../_base_/datasets/KIundHolz_no_fv.py',
     '../_base_/default_runtime.py',
-    '../_base_/schedules/schedule_80k_eval_2k.py'
+    '../_base_/schedules/schedule_40k.py'
 ]
 crop_size = (512, 512)
 pretrained = '/path/to/one-peace-vision.pkl'
@@ -146,5 +146,5 @@ data = dict(samples_per_gpu=1,
             val=dict(pipeline=test_pipeline),
             test=dict(pipeline=test_pipeline))
 runner = dict(type='IterBasedRunner')
-checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=1, create_symlink=False)
-evaluation = dict(interval=2000, metric='mIoU', save_best='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=4000, max_keep_ckpts=1, create_symlink=False)
+evaluation = dict(interval=4000, metric='mIoU', save_best='mIoU')
